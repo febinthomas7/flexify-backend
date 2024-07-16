@@ -3,7 +3,7 @@ const app = express();
 const port = 3000;
 
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  res.send("home page");
 });
 const data = [
   { title: "The Shawshank Redemption", year: 1994, genre: "Drama" },
@@ -13,7 +13,7 @@ const data = [
   { title: "Inception", year: 2010, genre: "Thriller" },
 ];
 
-app.get("/home", (req, res) => {
+app.get("/api", (req, res) => {
   res.json(data);
 });
 
