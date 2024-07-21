@@ -3,9 +3,9 @@ const express = require("express");
 const axios = require("axios");
 const app = express();
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 const api_key = process.env.API_KEY;
-console.log(process.env.API_KEY);
+
 app.get("/api/movies", (req, res) => {
   const options = {
     method: "GET",
