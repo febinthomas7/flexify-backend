@@ -1,8 +1,14 @@
 require("dotenv").config();
 const express = require("express");
+const cors = require("cors");
 const axios = require("axios");
 const app = express();
 
+var corsOptions = {
+  origin: process.env.BASE_URL,
+  method: ["GET", "POST"],
+};
+app.use(cors(corsOptions));
 const port = process.env.PORT;
 const api_key = process.env.API_KEY;
 
