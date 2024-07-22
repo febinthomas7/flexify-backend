@@ -8,10 +8,26 @@ var corsOptions = {
   origin: process.env.BASE_URL,
   method: ["GET", "POST"],
 };
-console.log(typeof process.env.BASE_URL);
 app.use(cors(corsOptions));
 const port = process.env.PORT;
 const api_key = process.env.API_KEY;
+
+app.get("/api/search", (req, res) => {
+  const query = req.query.search;
+  const options = {
+    method: "GET",
+    url: `https://api.themoviedb.org/3/search/multi?query=${query}&include_adult=true&language=en-US&page=1&api_key=${api_key}`,
+  };
+
+  axios
+    .request(options)
+    .then((response) => {
+      res.json(response.data.results);
+    })
+    .catch(function (error) {
+      console.error(error);
+    });
+});
 
 app.get("/api/movies", (req, res) => {
   const options = {
@@ -112,7 +128,7 @@ app.get("/api/recommendations", (req, res) => {
 
 app.get("/api/download/movie", async (req, res) => {
   const id = req.query.id;
-  console.log("download id", id);
+
   const options = {
     method: "GET",
     url: `https://api.themoviedb.org/3/movie/${id}?language=en-US&api_key=${api_key}`,
