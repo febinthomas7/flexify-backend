@@ -5,9 +5,10 @@ const axios = require("axios");
 const app = express();
 
 var corsOptions = {
-  origin: "https://flexifyy.netlify.app",
+  origin: process.env.BASE_URL,
   method: ["GET", "POST"],
 };
+console.log(typeof process.env.BASE_URL);
 app.use(cors(corsOptions));
 const port = process.env.PORT;
 const api_key = process.env.API_KEY;
