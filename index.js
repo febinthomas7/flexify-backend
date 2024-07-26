@@ -126,6 +126,22 @@ app.get("/api/recommendations", (req, res) => {
     });
 });
 
+app.get("/api/topratedmovies", (req, res) => {
+  const options = {
+    method: "GET",
+    url: `https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=1&api_key=${api_key}`,
+  };
+
+  axios
+    .request(options)
+    .then((response) => {
+      res.json(response.data.results);
+    })
+    .catch(function (error) {
+      console.error("error");
+    });
+});
+
 app.get("/api/download/movie", async (req, res) => {
   const id = req.query.id;
 
@@ -147,15 +163,6 @@ app.get("/api/download/movie", async (req, res) => {
   } catch (error) {
     console.error("Error:", error);
   }
-  await axios.request(options).then((response) => {
-    const data = response.data;
-    return response.data;
-  });
-
-  await axios.request(options).then((response) => {
-    const data = response.data;
-    return response.data;
-  });
 });
 
 app.listen(port, () => {
