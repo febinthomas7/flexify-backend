@@ -1,6 +1,5 @@
 const Joi = require("joi");
 const signinValidation = (req, res, next) => {
-  console.log(req.body);
   const schema = Joi.object({
     name: Joi.string().min(3).max(100).required(),
     email: Joi.string().email().required(),
