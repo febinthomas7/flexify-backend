@@ -14,7 +14,6 @@ router.post("/login", logininValidation, login);
 router.get("/userlist", ensureAuthentication, async (req, res) => {
   try {
     const movies = await UserModel.find();
-    console.log(movies);
     res.status(200).json(movies);
   } catch (error) {
     console.error("Error fetching movies:", error);
