@@ -29,6 +29,12 @@ const userSchema = new Schema(
     vote_average: {
       type: Number,
     },
+    type: {
+      type: String,
+    },
+    mode: {
+      type: String,
+    },
   },
   {
     timestamps: true,

@@ -115,10 +115,47 @@ router.get("/recommendations", (req, res) => {
     });
 });
 
+router.get("/similar", (req, res) => {
+  const options = {
+    method: "GET",
+    url: `https://api.themoviedb.org/3/${req.query.mode || req.query.mode2}/${
+      req.query.id
+    }/similar?language=en-US&page=1&sort_by=popularity.desc&api_key=${api_key}`,
+  };
+
+  axios
+    .request(options)
+    .then((response) => {
+      res.json(response.data.results);
+    })
+    .catch(function (error) {
+      console.error("error");
+    });
+});
+
 router.get("/topratedmovies", (req, res) => {
   const options = {
     method: "GET",
     url: `https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=1&api_key=${api_key}`,
+  };
+
+  axios
+    .request(options)
+    .then((response) => {
+      res.json(response.data.results);
+    })
+    .catch(function (error) {
+      console.error("error");
+    });
+});
+
+router.get("/trailer", (req, res) => {
+  const { mode, mode2, id } = req.query;
+  const options = {
+    method: "GET",
+    url: `https://api.themoviedb.org/3/${req.query.mode || req.query.mode2}/${
+      req.query.id
+    }/videos?language=en-US&api_key=${api_key}`,
   };
 
   axios
@@ -147,7 +184,6 @@ router.get("/download/movie", async (req, res) => {
       `https://yts.mx/api/v2/movie_details.json?imdb_id=${firstData}`
     );
     const secondData = secondResponse.data.data.movie?.torrents;
-
     res.json(secondData);
   } catch (error) {
     console.error("Error:", error);

@@ -1,6 +1,7 @@
 const UserModel = require("../Models/userWatchedModel");
 
 const watch = async (req, res) => {
+  const { type, mode, movie } = req.body;
   const {
     adult,
     id,
@@ -10,7 +11,9 @@ const watch = async (req, res) => {
     poster_path,
     backdrop_path,
     vote_average,
-  } = req.body;
+  } = movie;
+
+  console.log(type, mode, id);
 
   try {
     // Validate incoming data (you can use a validation library like Joi for this)
@@ -25,33 +28,32 @@ const watch = async (req, res) => {
       poster_path,
       backdrop_path,
       vote_average,
+      type,
+      mode,
     });
 
     // Save the model to the database
     await userModel.save();
 
     // Send a success response
-    res.status(201).json({ message: "Watching" });
+    res.status(201).json({ message: "added", success: true });
   } catch (error) {
     console.error("Error saving data:", error);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: "Internal server error", success: false });
   }
 };
 
 const deleteMovieById = async (req, res) => {
   const { id } = req.body;
 
-  res.status(201).json({ message: "Watching" });
   try {
-    const result = await UserModel.findByIdAndDelete(id);
+    await UserModel.findByIdAndDelete(id);
+    res.status(200).json({ message: "deleted", success: true });
 
-    if (result.deletedCount > 0) {
-      console.log("Movie deleted successfully");
-    } else {
-      console.log("Movie not found");
-    }
+    console.log("Movie deleted successfully");
   } catch (error) {
-    console.error("Error deleting movie:", error);
+    console.error("Error deleting data:", error);
+    res.status(500).json({ message: "Internal server error", success: false });
   }
 };
 
