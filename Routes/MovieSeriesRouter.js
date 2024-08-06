@@ -150,12 +150,11 @@ router.get("/topratedmovies", (req, res) => {
 });
 
 router.get("/trailer", (req, res) => {
-  const { mode, mode2, id } = req.query;
   const options = {
     method: "GET",
-    url: `https://api.themoviedb.org/3/${req.query.mode || req.query.mode2}/${
-      req.query.id
-    }/videos?language=en-US&api_key=${api_key}`,
+    url: `https://api.themoviedb.org/3/${
+      req.query.mode || req.query.mode2 || "movie"
+    }/${req.query.id}/videos?language=en-US&api_key=${api_key}`,
   };
 
   axios
