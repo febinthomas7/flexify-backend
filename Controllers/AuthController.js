@@ -30,16 +30,14 @@ const login = async (req, res) => {
       email: email,
     });
     if (!user) {
-      return res
-        .status(403)
-        .json({ message: "Auth failed to login", sucess: false });
+      return res.status(403).json({ message: "No User Found", sucess: false });
     }
 
     const isPassEqual = await bcrypt.compare(password, user.password);
     if (!isPassEqual) {
       return res
         .status(403)
-        .json({ message: "Auth failed to login", sucess: false });
+        .json({ message: "Incorrect Password", sucess: false });
     }
 
     const jwtToken = jwt.sign(

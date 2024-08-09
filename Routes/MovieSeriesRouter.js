@@ -37,7 +37,7 @@ router.get("/movies", (req, res) => {
 router.get("/trending", (req, res) => {
   const options = {
     method: "GET",
-    url: `https://api.themoviedb.org/3/trending/all/day?language=en-US&api_key=${api_key}`,
+    url: `https://api.themoviedb.org/3/trending/all/day?language=en-US&include_adult=true&api_key=${api_key}`,
   };
 
   axios
