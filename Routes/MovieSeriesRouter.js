@@ -21,13 +21,15 @@ router.get("/search", (req, res) => {
 router.get("/movies", (req, res) => {
   const options = {
     method: "GET",
-    url: `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&api_key=${api_key}`,
+    url: `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=${
+      req.query.page || "1"
+    }&sort_by=popularity.desc&api_key=${api_key}`,
   };
 
   axios
     .request(options)
     .then((response) => {
-      res.json(response.data.results);
+      res.json(response.data);
     })
     .catch(function (error) {
       console.error(error);
@@ -53,7 +55,9 @@ router.get("/trending", (req, res) => {
 router.get("/series", (req, res) => {
   const options = {
     method: "GET",
-    url: ` https://api.themoviedb.org/3/discover/tv?include_adult=false&include_null_first_air_dates=false&language=en-US&page=1&sort_by=popularity.desc&api_key=${api_key}`,
+    url: ` https://api.themoviedb.org/3/discover/tv?include_adult=false&include_null_first_air_dates=false&language=en-US&page=${
+      req.query.page || "1"
+    }&sort_by=popularity.desc&api_key=${api_key}`,
   };
 
   axios
