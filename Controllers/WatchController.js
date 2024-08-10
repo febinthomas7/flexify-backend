@@ -1,7 +1,8 @@
 const UserModel = require("../Models/userWatchedModel");
+const userModel = require("../Models/userModel");
 
 const watch = async (req, res) => {
-  const { type, mode, movie } = req.body;
+  const { type, mode, movie, userId } = req.body;
   const {
     adult,
     id,
@@ -13,13 +14,10 @@ const watch = async (req, res) => {
     vote_average,
   } = movie;
 
-  console.log(type, mode, id);
-
   try {
     // Validate incoming data (you can use a validation library like Joi for this)
 
-    // Create a new instance of the userModel with the provided data
-    const userModel = new UserModel({
+    const list = await UserModel.create({
       adult,
       id,
       genre_ids,
@@ -30,10 +28,13 @@ const watch = async (req, res) => {
       vote_average,
       type,
       mode,
+      user: userId,
     });
 
-    // Save the model to the database
-    await userModel.save();
+    const user = await userModel.findOne({ _id: userId });
+    user.watchlist.push(list._id);
+
+    await user.save();
 
     // Send a success response
     res.status(201).json({ message: "added", success: true });
@@ -48,7 +49,20 @@ const deleteMovieById = async (req, res) => {
 
   try {
     await UserModel.findByIdAndDelete(id);
-    res.status(200).json({ message: "deleted", success: true });
+    // res.status(200).json({ message: "deleted", success: true });
+
+    // Also, remove the movie from the user's watchlist if it exists
+    const user = await userModel.findOne({ watchlist: id });
+    if (user) {
+      user.watchlist = user.watchlist.filter(
+        (movieId) => movieId.toString() !== id
+      );
+      await user.save();
+
+      res.status(200).json({ message: "deleted", success: true });
+    } else {
+      console.log("User not found");
+    }
 
     console.log("Movie deleted successfully");
   } catch (error) {

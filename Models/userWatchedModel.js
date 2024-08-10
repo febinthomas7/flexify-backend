@@ -35,6 +35,10 @@ const userSchema = new Schema(
     mode: {
       type: String,
     },
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: "users",
+    },
   },
   {
     timestamps: true,

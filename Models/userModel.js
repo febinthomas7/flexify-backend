@@ -11,6 +11,15 @@ const userSchema = new Schema(
       required: true,
       unique: true,
     },
+    watchlist: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "usersWatchingList",
+      },
+    ],
+    dp: {
+      type: String,
+    },
     password: {
       type: String,
       required: true,
