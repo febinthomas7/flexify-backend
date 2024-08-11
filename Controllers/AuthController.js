@@ -55,6 +55,7 @@ const login = async (req, res) => {
       email,
       name: user.name,
       _id: user._id,
+      dp: user.dp,
     });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", sucess: false });

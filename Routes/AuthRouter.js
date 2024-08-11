@@ -1,9 +1,11 @@
 const router = require("express").Router();
 const { signin, login } = require("../Controllers/AuthController");
 const { watch, deleteMovieById } = require("../Controllers/WatchController");
+const userDp = require("../Controllers/UploadFile");
+const multer = require("multer");
 const ensureAuthentication = require("../Middlewares/Auth");
-const UserModel = require("../Models/userWatchedModel");
 const userModal = require("../Models/userModel");
+const upload = multer({ storage: multer.memoryStorage() });
 const {
   signinValidation,
   logininValidation,
@@ -22,7 +24,12 @@ router.get("/userlist", ensureAuthentication, async (req, res) => {
     console.error("Error fetching movies:", error);
   }
 });
+router.post("/upload", upload.single("avatar"), userDp);
 
+router.get("/avatar", async (req, res) => {
+  const user = await userModal.findById(req.query.userId);
+  res.send({ userdp: user.dp, name: user.name });
+});
 router.post("/addwatch", watch);
 router.post("/deletewatch", deleteMovieById);
 

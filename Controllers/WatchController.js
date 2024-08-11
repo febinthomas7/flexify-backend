@@ -1,4 +1,4 @@
-const UserModel = require("../Models/userWatchedModel");
+const watchModel = require("../Models/userWatchedModel");
 const userModel = require("../Models/userModel");
 
 const watch = async (req, res) => {
@@ -17,7 +17,7 @@ const watch = async (req, res) => {
   try {
     // Validate incoming data (you can use a validation library like Joi for this)
 
-    const list = await UserModel.create({
+    const list = await watchModel.create({
       adult,
       id,
       genre_ids,
@@ -48,10 +48,6 @@ const deleteMovieById = async (req, res) => {
   const { id } = req.body;
 
   try {
-    await UserModel.findByIdAndDelete(id);
-    // res.status(200).json({ message: "deleted", success: true });
-
-    // Also, remove the movie from the user's watchlist if it exists
     const user = await userModel.findOne({ watchlist: id });
     if (user) {
       user.watchlist = user.watchlist.filter(
