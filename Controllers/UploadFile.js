@@ -10,39 +10,79 @@ const {
 const storage = getStorage(app);
 
 const userDp = async (req, res) => {
-  if (!req.file) {
-    return res.redirect(`${process.env.BASE_URL}/myprofile`);
+  const { name, email, userId } = req.body;
+  const avatarFile = req.files?.avatar?.[0];
+  const backgroundFile = req.files?.background?.[0];
+
+  if (!avatarFile && !backgroundFile && !name) {
+    return res.status(400).json({ message: "empty fields", success: false });
   }
+
   try {
-    const storageRef = ref(
-      storage,
-      `/avatar/${req.query.email.split("@")[0]}/${
-        req.query.userId + "." + req.file?.originalname.split(".")[1]
-      }`
-    );
-    const metadata = {
-      contentType: req.file.mimetype,
-    };
+    const user = await userModal.findOne({ _id: userId });
 
-    const snapshot = await uploadBytesResumable(
-      storageRef,
-      req.file.buffer,
-      metadata
-    );
+    // Handle avatar upload
+    if (avatarFile) {
+      const avatarRef = ref(
+        storage,
+        `/avatar/${email.split("@")[0]}/${
+          userId + "." + avatarFile.originalname.split(".")[1]
+        }`
+      );
 
-    const downloadUrl = await getDownloadURL(snapshot.ref);
+      const avatarSnapshot = await uploadBytesResumable(
+        avatarRef,
+        avatarFile.buffer,
+        {
+          contentType: avatarFile.mimetype,
+        }
+      );
 
-    const user = await userModal.findOne({ _id: req.query.userId });
-    user.dp = downloadUrl;
+      const avatarUrl = await getDownloadURL(avatarSnapshot.ref);
+      user.dp = avatarUrl;
+    }
 
-    user.name = req.query.name;
+    // Handle background upload
+    if (backgroundFile) {
+      const backgroundRef = ref(
+        storage,
+        `/background/${email.split("@")[0]}/${
+          userId + "." + backgroundFile.originalname.split(".")[1]
+        }`
+      );
+
+      const backgroundSnapshot = await uploadBytesResumable(
+        backgroundRef,
+        backgroundFile.buffer,
+        {
+          contentType: backgroundFile.mimetype,
+        }
+      );
+
+      const backgroundUrl = await getDownloadURL(backgroundSnapshot.ref);
+      user.backgroundImg = backgroundUrl;
+    }
+
+    // Update user name
+    if (name) {
+      user.name = name;
+    }
 
     await user.save();
 
-    res.redirect(`${process.env.BASE_URL}/myprofile`);
+    res.status(200).json({
+      message: "Updated successfully",
+      success: true,
+      dp: user.dp,
+      background: user.backgroundImg,
+      name: user.name,
+    });
   } catch (error) {
-    console.error("Error deleting data:", error);
-    return res.redirect(`${process.env.BASE_URL}/myprofile`);
+    console.error("Failed to update", error);
+    res.status(500).json({
+      message: "Failed to update ",
+      success: false,
+    });
   }
 };
 

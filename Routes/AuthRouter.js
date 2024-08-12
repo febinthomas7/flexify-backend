@@ -24,11 +24,22 @@ router.get("/userlist", ensureAuthentication, async (req, res) => {
     console.error("Error fetching movies:", error);
   }
 });
-router.post("/upload", upload.single("avatar"), userDp);
+router.post(
+  "/upload",
+  upload.fields([
+    { name: "avatar", maxCount: 1 },
+    { name: "background", maxCount: 1 },
+  ]),
+  userDp
+);
 
 router.get("/avatar", async (req, res) => {
   const user = await userModal.findById(req.query.userId);
-  res.send({ userdp: user.dp, name: user.name });
+  res.send({
+    userdp: user.dp,
+    name: user.name,
+    background: user.backgroundImg,
+  });
 });
 router.post("/addwatch", watch);
 router.post("/deletewatch", deleteMovieById);
