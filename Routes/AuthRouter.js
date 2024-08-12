@@ -33,6 +33,32 @@ router.post(
   userDp
 );
 
+router.get("/deleteuserprofileinfo", async (req, res) => {
+  const { userId, item } = req.query;
+  try {
+    const user = await userModal.findById(userId);
+    if (item == "dp") {
+      user.dp = null;
+    }
+    if (item == "backgroundImg") {
+      user.backgroundImg = null;
+    }
+    await user.save();
+
+    res
+      .status(200)
+      .json({
+        message: "Profile deleted successfully",
+        success: true,
+        dp: user.dp,
+        background: user.backgroundImg,
+      });
+  } catch (error) {
+    res.status(500).json({ message: "Error deleting profile", success: false });
+    console.error("Error deleting profile:", error);
+  }
+});
+
 router.get("/avatar", async (req, res) => {
   const user = await userModal.findById(req.query.userId);
   res.send({
