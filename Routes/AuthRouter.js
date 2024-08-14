@@ -45,14 +45,12 @@ router.get("/deleteuserprofileinfo", async (req, res) => {
     }
     await user.save();
 
-    res
-      .status(200)
-      .json({
-        message: "Profile deleted successfully",
-        success: true,
-        dp: user.dp,
-        background: user.backgroundImg,
-      });
+    res.status(200).json({
+      message: "Profile deleted successfully",
+      success: true,
+      dp: user.dp,
+      background: user.backgroundImg,
+    });
   } catch (error) {
     res.status(500).json({ message: "Error deleting profile", success: false });
     console.error("Error deleting profile:", error);
