@@ -24,6 +24,7 @@ router.get("/userlist", ensureAuthentication, async (req, res) => {
     console.error("Error fetching movies:", error);
   }
 });
+
 router.post(
   "/upload",
   upload.fields([

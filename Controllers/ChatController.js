@@ -1,12 +1,24 @@
 const chatModel = require("../Models/chatModel");
 const userModel = require("../Models/userModel");
 const messageModel = require("../Models/messageModel");
+const app = require("../FireBase");
+const {
+  getStorage,
+  ref,
+  getDownloadURL,
+  uploadBytesResumable,
+} = require("firebase/storage");
+const { v4: uuidv4 } = require("uuid");
 const { getReceiverSocketId, io } = require("../socket/socket");
+const storage = getStorage(app);
 
 const sendmessage = async (req, res) => {
   try {
     const { senderId, receiverId, message } = req.body;
-    if (message == "") {
+    // console.log(req.query.image);
+    const image = req.files?.image?.[0];
+    console.log(image);
+    if (message == "" && !image) {
       return res
         .status(400)
         .json({ message: "Message cannot be empty", success: false });
@@ -21,11 +33,32 @@ const sendmessage = async (req, res) => {
         participants: [senderId, receiverId],
       });
     }
+    let imageUrl;
+    if (image) {
+      const imageRef = ref(
+        storage,
+        `/chatImages/${uuidv4() + "." + imageRef.originalname.split(".")[1]}`
+      );
+
+      const avatarSnapshot = await uploadBytesResumable(
+        imageRef,
+        imageRef.buffer,
+        {
+          contentType: imageRef.mimetype,
+        }
+      );
+
+      imageUrl = await getDownloadURL(avatarSnapshot.ref);
+
+      // imageUrl = await getDownloadURL(avatarSnapshot.ref);
+      // user.imageUrl = imageUrl;
+    }
 
     const newMessage = new messageModel({
       senderId,
       receiverId,
       message,
+      imageUrl,
     });
 
     if (newMessage) {
