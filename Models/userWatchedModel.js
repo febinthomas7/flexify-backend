@@ -35,6 +35,9 @@ const userSchema = new Schema(
     mode: {
       type: String,
     },
+    original_language: {
+      type: String,
+    },
     user: {
       type: Schema.Types.ObjectId,
       ref: "users",

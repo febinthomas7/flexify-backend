@@ -12,6 +12,7 @@ const watch = async (req, res) => {
     poster_path,
     backdrop_path,
     vote_average,
+    original_language,
   } = movie;
 
   try {
@@ -28,6 +29,7 @@ const watch = async (req, res) => {
       vote_average,
       type,
       mode,
+      original_language,
       user: userId,
     });
 
