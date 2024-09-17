@@ -4,7 +4,7 @@ const ensureAuthentication = (req, res, next) => {
   if (!auth) {
     return res
       .status(403)
-      .json({ message: "Unauthorized ,JWT token required" });
+      .json({ message: "Unauthorized ,JWT token required", success: false });
   }
   try {
     const decoded = jwt.verify(auth, process.env.JWT_SECRET);
@@ -13,7 +13,7 @@ const ensureAuthentication = (req, res, next) => {
   } catch (error) {
     return res
       .status(403)
-      .json({ message: "Invalid JWT token or expired token" });
+      .json({ message: "Invalid JWT token or expired token", success: false });
   }
 };
 

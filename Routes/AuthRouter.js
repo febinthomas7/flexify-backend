@@ -1,6 +1,10 @@
 const router = require("express").Router();
 const { signin, login } = require("../Controllers/AuthController");
-const { watch, deleteMovieById } = require("../Controllers/WatchController");
+const {
+  watch,
+  deleteMovieById,
+  device,
+} = require("../Controllers/WatchController");
 const userDp = require("../Controllers/UploadFile");
 const multer = require("multer");
 const ensureAuthentication = require("../Middlewares/Auth");
@@ -57,7 +61,7 @@ router.get("/deleteuserprofileinfo", async (req, res) => {
     console.error("Error deleting profile:", error);
   }
 });
-
+router.post("/user/device", device);
 router.get("/avatar", async (req, res) => {
   const user = await userModal.findById(req.query.userId);
   res.send({

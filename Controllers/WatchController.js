@@ -1,5 +1,6 @@
 const watchModel = require("../Models/userWatchedModel");
 const userModel = require("../Models/userModel");
+const deviceModel = require("../Models/deviceDetails");
 
 const watch = async (req, res) => {
   const { type, mode, movie, userId } = req.body;
@@ -45,7 +46,49 @@ const watch = async (req, res) => {
     res.status(500).json({ message: "Internal server error", success: false });
   }
 };
+const device = async (req, res) => {
+  try {
+    const { device, ipAddress, userid } = req.body;
 
+    if (!device || !ipAddress || !userid) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Missing required fields" });
+    }
+
+    // Check if the device already exists
+    let existingDevice = await deviceModel.findOne({ device, ipAddress });
+    if (!existingDevice) {
+      // Create a new device entry if it doesn't exist
+      existingDevice = await deviceModel.create({ device, ipAddress });
+    }
+
+    // Find the user and populate their device details
+    const user = await userModel
+      .findOne({ _id: userid })
+      .populate("devicedetails")
+      .select("device ipAddress");
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    // Avoid adding the same device multiple times
+    if (!user.devicedetails.some((d) => d._id.equals(existingDevice._id))) {
+      user.devicedetails.push(existingDevice._id);
+      await user.save();
+    }
+
+    res.json({
+      success: true,
+      user,
+    });
+  } catch (error) {
+    console.error("Error in device function:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
 const deleteMovieById = async (req, res) => {
   const { id } = req.body;
 
@@ -69,4 +112,4 @@ const deleteMovieById = async (req, res) => {
   }
 };
 
-module.exports = { watch, deleteMovieById };
+module.exports = { watch, deleteMovieById, device };

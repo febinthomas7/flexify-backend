@@ -17,6 +17,12 @@ const userSchema = new Schema(
         ref: "usersWatchingList",
       },
     ],
+    devicedetails: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "deviceDetails",
+      },
+    ],
     dp: {
       type: String,
     },
@@ -30,6 +36,7 @@ const userSchema = new Schema(
       required: true,
     },
   },
+
   {
     timestamps: true,
   }
