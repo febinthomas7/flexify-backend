@@ -14,6 +14,9 @@ const watch = async (req, res) => {
     backdrop_path,
     vote_average,
     original_language,
+    thumbnail,
+    genres,
+    embed_url,
   } = movie;
 
   try {
@@ -22,15 +25,16 @@ const watch = async (req, res) => {
     const list = await watchModel.create({
       adult,
       id,
-      genre_ids,
+      genre_ids: genre_ids || genres,
       overview,
       title,
-      poster_path,
-      backdrop_path,
+      poster_path: poster_path || thumbnail,
+      backdrop_path: backdrop_path || thumbnail,
       vote_average,
       type,
+      embed_url,
       mode,
-      original_language,
+      original_language: original_language || "Ja",
       user: userId,
     });
 

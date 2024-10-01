@@ -70,6 +70,22 @@ const series = (req, res) => {
     });
 };
 
+const anime = (req, res) => {
+  const options = {
+    method: "GET",
+    url: `https://anime-api.xyz/page-${req.query.page || "1"}`,
+  };
+
+  axios
+    .request(options)
+    .then((response) => {
+      res.json(response.data);
+    })
+    .catch(function (error) {
+      console.error("error");
+    });
+};
+
 const upcomingseries = (req, res) => {
   const options = {
     method: "GET",
@@ -198,7 +214,9 @@ const credits = (req, res) => {
 
   const options = {
     method: "GET",
-    url: `https://api.themoviedb.org/3/${mode}/${id}/credits?language=en-US&api_key=${api_key}`,
+    url: `https://api.themoviedb.org/3/${mode}/${
+      id || "8859"
+    }/credits?language=en-US&api_key=${api_key}`,
   };
 
   try {
@@ -206,6 +224,7 @@ const credits = (req, res) => {
       res.json(response.data);
     });
   } catch (error) {
+    res.json({ status: "404", error: error });
     console.error("Error:", error);
   }
 };
@@ -213,6 +232,7 @@ const credits = (req, res) => {
 module.exports = {
   search,
   movies,
+  anime,
   trending,
   series,
   upcomingseries,

@@ -38,6 +38,9 @@ const userSchema = new Schema(
     original_language: {
       type: String,
     },
+    embed_url: {
+      type: String,
+    },
     user: {
       type: Schema.Types.ObjectId,
       ref: "users",

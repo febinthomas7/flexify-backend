@@ -2,6 +2,7 @@ const router = require("express").Router();
 
 const {
   search,
+  anime,
   movies,
   trending,
   series,
@@ -18,6 +19,8 @@ const {
 router.get("/search", search);
 
 router.get("/movies", movies);
+
+router.get("/anime", anime);
 
 router.get("/trending", trending);
 
