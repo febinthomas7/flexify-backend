@@ -6,7 +6,7 @@ const userSchema = new Schema(
       type: String,
     },
 
-    ipAddress: {
+    uniqueIdentifier: {
       type: String,
     },
   },

@@ -52,26 +52,30 @@ const watch = async (req, res) => {
 };
 const device = async (req, res) => {
   try {
-    const { device, ipAddress, userid } = req.body;
+    const { device, uniqueIdentifier, userid } = req.body;
+    console.log(uniqueIdentifier);
 
-    if (!device || !ipAddress || !userid) {
+    if (!device || !uniqueIdentifier || !userid) {
       return res
         .status(400)
         .json({ success: false, message: "Missing required fields" });
     }
 
     // Check if the device already exists
-    let existingDevice = await deviceModel.findOne({ device, ipAddress });
+    let existingDevice = await deviceModel.findOne({
+      device,
+      uniqueIdentifier,
+    });
     if (!existingDevice) {
       // Create a new device entry if it doesn't exist
-      existingDevice = await deviceModel.create({ device, ipAddress });
+      existingDevice = await deviceModel.create({ device, uniqueIdentifier });
     }
 
     // Find the user and populate their device details
     const user = await userModel
       .findOne({ _id: userid })
       .populate("devicedetails")
-      .select("device ipAddress");
+      .select("device uniqueIdentifier");
     if (!user) {
       return res
         .status(404)
