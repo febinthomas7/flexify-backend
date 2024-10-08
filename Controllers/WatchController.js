@@ -53,7 +53,6 @@ const watch = async (req, res) => {
 const device = async (req, res) => {
   try {
     const { device, uniqueIdentifier, userid } = req.body;
-    console.log(uniqueIdentifier);
 
     if (!device || !uniqueIdentifier || !userid) {
       return res
@@ -74,8 +73,8 @@ const device = async (req, res) => {
     // Find the user and populate their device details
     const user = await userModel
       .findOne({ _id: userid })
-      .populate("devicedetails")
-      .select("device uniqueIdentifier");
+      .populate("devicedetails");
+    // .select("device uniqueIdentifier");
     if (!user) {
       return res
         .status(404)

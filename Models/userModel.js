@@ -30,6 +30,12 @@ const userSchema = new Schema(
     backgroundImg: {
       type: String,
     },
+    resetOtp: {
+      type: Number,
+    },
+    resetOtpExpiry: {
+      type: Number,
+    },
 
     password: {
       type: String,
