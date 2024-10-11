@@ -9,6 +9,8 @@ const {
   watch,
   deleteMovieById,
   device,
+  like,
+  deleteLikeById,
 } = require("../Controllers/WatchController");
 const userDp = require("../Controllers/UploadFile");
 const multer = require("multer");
@@ -29,7 +31,8 @@ router.get("/userlist", ensureAuthentication, async (req, res) => {
   try {
     const movies = await userModal
       .findOne({ _id: req.query.userId })
-      .populate("watchlist");
+      .populate(["watchlist", "likedlist"]);
+
     res.status(200).json(movies);
   } catch (error) {
     console.error("Error fetching movies:", error);
@@ -79,5 +82,7 @@ router.get("/avatar", async (req, res) => {
 });
 router.post("/addwatch", watch);
 router.post("/deletewatch", deleteMovieById);
+router.post("/likedWatch", like);
+router.post("/deletelike", deleteLikeById);
 
 module.exports = router;

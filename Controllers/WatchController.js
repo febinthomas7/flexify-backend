@@ -1,6 +1,7 @@
 const watchModel = require("../Models/userWatchedModel");
 const userModel = require("../Models/userModel");
 const deviceModel = require("../Models/deviceDetails");
+const UserLikedModel = require("../Models/UserLiked");
 
 const watch = async (req, res) => {
   const { type, mode, movie, userId } = req.body;
@@ -44,9 +45,117 @@ const watch = async (req, res) => {
     await user.save();
 
     // Send a success response
-    res.status(201).json({ message: "added", success: true });
+    res.status(201).json({
+      message: "added",
+      success: true,
+      data: {
+        adult,
+        id,
+        genre_ids: genre_ids || genres,
+        overview,
+        title,
+        poster_path: poster_path || thumbnail,
+        backdrop_path: backdrop_path || thumbnail,
+        vote_average,
+        type,
+        embed_url,
+        mode,
+        original_language: original_language || "Ja",
+        user: userId,
+      },
+    });
   } catch (error) {
     console.error("Error saving data:", error);
+    res.status(500).json({ message: "Internal server error", success: false });
+  }
+};
+
+const like = async (req, res) => {
+  const { type, mode, movie, userId } = req.body;
+  const {
+    adult,
+    id,
+    genre_ids,
+    overview,
+    title,
+    poster_path,
+    backdrop_path,
+    vote_average,
+    original_language,
+    thumbnail,
+    genres,
+    embed_url,
+  } = movie;
+
+  try {
+    // Validate incoming data (you can use a validation library like Joi for this)
+
+    const list = await UserLikedModel.create({
+      adult,
+      id,
+      genre_ids: genre_ids || genres,
+      overview,
+      title,
+      poster_path: poster_path || thumbnail,
+      backdrop_path: backdrop_path || thumbnail,
+      vote_average,
+      type,
+      embed_url,
+      mode,
+      original_language: original_language || "Ja",
+      user: userId,
+    });
+
+    const user = await userModel.findOne({ _id: userId });
+    user.likedlist.push(list._id);
+
+    await user.save();
+
+    // Send a success response
+    res.status(201).json({
+      message: "liked",
+      success: true,
+      data: {
+        adult,
+        id,
+        genre_ids: genre_ids || genres,
+        overview,
+        title,
+        poster_path: poster_path || thumbnail,
+        backdrop_path: backdrop_path || thumbnail,
+        vote_average,
+        type,
+        embed_url,
+        mode,
+        original_language: original_language || "Ja",
+        user: userId,
+      },
+    });
+    console.log("added");
+  } catch (error) {
+    console.error("Error saving data:", error);
+    res.status(500).json({ message: "Internal server error", success: false });
+  }
+};
+const deleteLikeById = async (req, res) => {
+  const { id } = req.body;
+
+  try {
+    const user = await userModel.findOne({ likedlist: id });
+    if (user) {
+      user.likedlist = user.likedlist.filter(
+        (movieId) => movieId.toString() !== id
+      );
+      await user.save();
+
+      res.status(200).json({ message: "deleted", success: true });
+    } else {
+      console.log("User not found");
+    }
+
+    console.log("Movie deleted successfully");
+  } catch (error) {
+    console.error("Error deleting data:", error);
     res.status(500).json({ message: "Internal server error", success: false });
   }
 };
@@ -101,10 +210,13 @@ const deleteMovieById = async (req, res) => {
 
   try {
     const user = await userModel.findOne({ watchlist: id });
+    await watchModel.findOneAndDelete({ _id: id });
+
     if (user) {
       user.watchlist = user.watchlist.filter(
         (movieId) => movieId.toString() !== id
       );
+
       await user.save();
 
       res.status(200).json({ message: "deleted", success: true });
@@ -119,4 +231,4 @@ const deleteMovieById = async (req, res) => {
   }
 };
 
-module.exports = { watch, deleteMovieById, device };
+module.exports = { watch, deleteMovieById, device, like, deleteLikeById };

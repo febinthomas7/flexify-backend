@@ -17,6 +17,12 @@ const userSchema = new Schema(
         ref: "usersWatchingList",
       },
     ],
+    likedlist: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "usersLikedList",
+      },
+    ],
     devicedetails: [
       {
         type: Schema.Types.ObjectId,
