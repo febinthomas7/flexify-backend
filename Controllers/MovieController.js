@@ -19,11 +19,12 @@ const search = (req, res) => {
 };
 
 const movies = (req, res) => {
+  console.log(req.query.lang);
   const options = {
     method: "GET",
-    url: `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=${
-      req.query.page || "1"
-    }&sort_by=popularity.desc&api_key=${api_key}`,
+    url: `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&with_original_language=${
+      req.query.lang || "en"
+    }&page=${req.query.page || "1"}&sort_by=popularity.desc&api_key=${api_key}`,
   };
 
   axios
@@ -53,11 +54,13 @@ const trending = (req, res) => {
 };
 
 const series = (req, res) => {
+  console.log(req.query.lang);
   const options = {
     method: "GET",
-    url: `https://api.themoviedb.org/3/discover/tv?include_adult=false&include_null_first_air_dates=false&language=en-US&page=${
-      req.query.page || "1"
-    }&sort_by=popularity.desc&api_key=${api_key}`,
+    url: `https://api.themoviedb.org/3/discover/tv?include_adult=false&include_null_first_air_dates=false&with_original_language=${
+      req.query.lang || "en"
+    }&
+    page=${req.query.page || "1"}&sort_by=popularity.desc&api_key=${api_key}`,
   };
 
   axios
@@ -119,11 +122,10 @@ const upcomingmovies = (req, res) => {
 };
 
 const recommendations = (req, res) => {
+  console.log(req.query.mode);
   const options = {
     method: "GET",
-    url: `https://api.themoviedb.org/3/${req.query.mode || req.query.mode2}/${
-      req.query.id
-    }/recommendations?language=en-US&page=1&sort_by=popularity.desc&api_key=${api_key}`,
+    url: `https://api.themoviedb.org/3/${req.query.mode}/${req.query.id}/recommendations?language=en-US&page=1&sort_by=popularity.desc&api_key=${api_key}`,
   };
 
   axios
@@ -139,9 +141,7 @@ const recommendations = (req, res) => {
 const similar = (req, res) => {
   const options = {
     method: "GET",
-    url: `https://api.themoviedb.org/3/${req.query.mode || req.query.mode2}/${
-      req.query.id
-    }/similar?language=en-US&page=1&sort_by=popularity.desc&api_key=${api_key}`,
+    url: `https://api.themoviedb.org/3/${req.query.mode}/${req.query.id}/similar?language=en-US&page=1&sort_by=popularity.desc&api_key=${api_key}`,
   };
 
   axios
@@ -173,9 +173,9 @@ const topratedmovies = (req, res) => {
 const trailer = (req, res) => {
   const options = {
     method: "GET",
-    url: `https://api.themoviedb.org/3/${
-      req.query.mode || req.query.mode2 || "movie"
-    }/${req.query.id}/videos?language=en-US&api_key=${api_key}`,
+    url: `https://api.themoviedb.org/3/${req.query.mode || "movie"}/${
+      req.query.id
+    }/videos?language=en-US&api_key=${api_key}`,
   };
 
   axios
