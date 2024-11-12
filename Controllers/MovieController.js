@@ -19,12 +19,15 @@ const search = (req, res) => {
 };
 
 const movies = (req, res) => {
-  console.log(req.query.lang);
   const options = {
     method: "GET",
-    url: `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&with_original_language=${
+    url: `https://api.themoviedb.org/3/discover/movie?include_adult=false&with_genres=${
+      req.query.genreid || "18"
+    }&include_video=false&with_original_language=${
       req.query.lang || "en"
-    }&page=${req.query.page || "1"}&sort_by=popularity.desc&api_key=${api_key}`,
+    }&page=${req.query.page || "1"}&with_origin_country=${
+      req.query.country || "US"
+    }&sort_by=popularity.desc&api_key=${api_key}`,
   };
 
   axios
@@ -54,12 +57,11 @@ const trending = (req, res) => {
 };
 
 const series = (req, res) => {
-  console.log(req.query.lang);
   const options = {
     method: "GET",
     url: `https://api.themoviedb.org/3/discover/tv?include_adult=false&include_null_first_air_dates=false&with_original_language=${
       req.query.lang || "en"
-    }&
+    }&with_origin_country=${req.query.country || "US"}&
     page=${req.query.page || "1"}&sort_by=popularity.desc&api_key=${api_key}`,
   };
 
@@ -108,7 +110,7 @@ const upcomingseries = (req, res) => {
 const upcomingmovies = (req, res) => {
   const options = {
     method: "GET",
-    url: `https://api.themoviedb.org/3/movie/upcoming?language=en-US&page=1&api_key=${api_key}`,
+    url: `https://api.themoviedb.org/3/movie/upcoming?with_original_language=ml&page=1&api_key=${api_key}`,
   };
 
   axios
@@ -157,7 +159,7 @@ const similar = (req, res) => {
 const topratedmovies = (req, res) => {
   const options = {
     method: "GET",
-    url: `https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=1&api_key=${api_key}`,
+    url: `https://api.themoviedb.org/3/tv/top_rated?with_origin_country=IN&page=1&api_key=${api_key}`,
   };
 
   axios
