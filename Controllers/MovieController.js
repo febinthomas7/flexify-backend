@@ -172,6 +172,53 @@ const topratedmovies = (req, res) => {
     });
 };
 
+const person = (req, res) => {
+  const options = {
+    method: "GET",
+    url: `https://api.themoviedb.org/3/person/${req.query.id}?language=en-US&api_key=${api_key}`,
+  };
+
+  axios
+    .request(options)
+    .then((response) => {
+      res.json(response.data);
+    })
+    .catch(function (error) {
+      console.error("error");
+    });
+};
+const combinedcredits = (req, res) => {
+  const options = {
+    method: "GET",
+    url: `https://api.themoviedb.org/3/person/${req.query.id}/combined_credits?language=en-US&api_key=${api_key}`,
+  };
+
+  axios
+    .request(options)
+    .then((response) => {
+      res.json(response.data);
+    })
+    .catch(function (error) {
+      console.error("error");
+    });
+};
+
+const actors = (req, res) => {
+  const options = {
+    method: "GET",
+    url: `https://api.themoviedb.org/3/person/popular?language=en-US&page=${req.query.page}&api_key=${api_key}`,
+  };
+
+  axios
+    .request(options)
+    .then((response) => {
+      res.json(response.data);
+    })
+    .catch(function (error) {
+      console.error("error");
+    });
+};
+
 const trailer = (req, res) => {
   const options = {
     method: "GET",
@@ -246,4 +293,7 @@ module.exports = {
   trailer,
   download,
   credits,
+  person,
+  combinedcredits,
+  actors,
 };

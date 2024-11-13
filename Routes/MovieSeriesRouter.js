@@ -14,6 +14,9 @@ const {
   trailer,
   download,
   credits,
+  person,
+  combinedcredits,
+  actors,
 } = require("../Controllers/MovieController");
 
 router.get("/search", search);
@@ -34,6 +37,9 @@ router.get("/recommendations", recommendations);
 router.get("/similar", similar);
 
 router.get("/topratedmovies", topratedmovies);
+router.get("/person", person);
+router.get("/combinedcredits", combinedcredits);
+router.get("/actors", actors);
 
 router.get("/trailer", trailer);
 
