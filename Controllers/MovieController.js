@@ -124,7 +124,6 @@ const upcomingmovies = (req, res) => {
 };
 
 const recommendations = (req, res) => {
-  console.log(req.query.mode);
   const options = {
     method: "GET",
     url: `https://api.themoviedb.org/3/${req.query.mode}/${req.query.id}/recommendations?language=en-US&page=1&sort_by=popularity.desc&api_key=${api_key}`,
