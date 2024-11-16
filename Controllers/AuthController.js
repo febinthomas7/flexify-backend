@@ -43,10 +43,12 @@ const request_reset = async (req, res) => {
       html: generateEmailTemplate(otp),
     });
 
-    res.status(200).json({ message: "OTP sent to your email" });
+    res.status(200).json({ message: "OTP sent to your email", success: true });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Error requesting OTP", error });
+    res
+      .status(500)
+      .json({ message: "Error requesting OTP", error, success: false });
   }
 };
 
