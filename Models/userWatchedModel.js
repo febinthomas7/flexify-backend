@@ -29,6 +29,9 @@ const userSchema = new Schema(
     vote_average: {
       type: Number,
     },
+    release_date: {
+      type: String,
+    },
     type: {
       type: String,
     },
