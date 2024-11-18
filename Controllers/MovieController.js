@@ -78,7 +78,7 @@ const series = (req, res) => {
 const anime = (req, res) => {
   const options = {
     method: "GET",
-    url: `https://anime-api.xyz/page-${req.query.page || "1"}`,
+    url: `https://anime-api.xyz/new?page=${req.query.page || "1"}`,
   };
 
   axios
