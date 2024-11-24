@@ -18,6 +18,22 @@ const search = (req, res) => {
     });
 };
 
+const searchAnime = (req, res) => {
+  const query = req.query.search;
+  const options = {
+    method: "GET",
+    url: `https://anime-api.xyz/search?q=${query}&page=1`,
+  };
+
+  axios
+    .request(options)
+    .then((response) => {
+      res.json(response.data);
+    })
+    .catch(function (error) {
+      console.error(error);
+    });
+};
 const movies = (req, res) => {
   const options = {
     method: "GET",
@@ -79,6 +95,22 @@ const anime = (req, res) => {
   const options = {
     method: "GET",
     url: `https://anime-api.xyz/new?page=${req.query.page || "1"}`,
+  };
+
+  axios
+    .request(options)
+    .then((response) => {
+      res.json(response.data);
+    })
+    .catch(function (error) {
+      console.error("error");
+    });
+};
+
+const animeEpisodes = (req, res) => {
+  const options = {
+    method: "GET",
+    url: `https://anime-api.xyz/episodes?url=${req.query.id}`,
   };
 
   axios
@@ -295,4 +327,6 @@ module.exports = {
   person,
   combinedcredits,
   actors,
+  animeEpisodes,
+  searchAnime,
 };

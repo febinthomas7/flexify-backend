@@ -17,6 +17,8 @@ const {
   person,
   combinedcredits,
   actors,
+  animeEpisodes,
+  searchAnime,
 } = require("../Controllers/MovieController");
 
 router.get("/search", search);
@@ -46,5 +48,9 @@ router.get("/trailer", trailer);
 router.get("/download/movie", download);
 
 router.get("/credits", credits);
+
+router.get("/episode", animeEpisodes);
+
+router.get("/search/anime", searchAnime);
 
 module.exports = router;

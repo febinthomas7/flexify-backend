@@ -5,51 +5,39 @@ const userSchema = new Schema(
     name: {
       type: String,
       required: true,
-    },
-    email: {
+    },email: {
       type: String,
       required: true,
       unique: true,
-    },
-    watchlist: [
+    }, watchlist: [
       {
         type: Schema.Types.ObjectId,
         ref: "usersWatchingList",
       },
-    ],
-    likedlist: [
+    ],likedlist: [
       {
         type: Schema.Types.ObjectId,
         ref: "usersLikedList",
       },
-    ],
-    devicedetails: [
+    ],devicedetails: [
       {
         type: Schema.Types.ObjectId,
         ref: "deviceDetails",
       },
-    ],
-    dp: {
+    ],dp: {
       type: String,
-    },
-
-    backgroundImg: {
+    },backgroundImg: {
       type: String,
-    },
-    resetOtp: {
+    },resetOtp: {
       type: Number,
-    },
-    resetOtpExpiry: {
+    },resetOtpExpiry: {
       type: Number,
-    },
-
-    password: {
+    }, password: {
       type: String,
       required: true,
     },
   },
-
-  {
+ {
     timestamps: true,
   }
 );
