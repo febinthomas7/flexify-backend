@@ -52,7 +52,46 @@ const generateEmailTemplate = (otp) => `
 </html>
 `;
 
+const generateWelcomeTemplate = (name) => `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to Flexifyy</title>
+</head>
+<body style="font-family: Arial, sans-serif; margin: 0; padding: 0; ">
+  <div style="max-width: 600px; margin: 20px auto; background-color: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+    <div style="background-color: #333; color: #fff; padding: 20px; text-align: center;">
+      <h1 style="margin: 0; font-size: 24px;">Welcome to Flexifyy!</h1>
+    </div>
+    <div style="padding: 20px;">
+      <h2 style="margin-top: 0; color: #b91c1c;">Hi ${name},</h2>
+      <p style="line-height: 1.6;">
+        We're thrilled to have you join the Flexifyy community! Get ready to dive into a world of endless entertainment, 
+        from the latest blockbusters to timeless classics. Enjoy the ultimate movie streaming experience tailored just for you.
+      </p>
+      <div style="margin: 20px 0; text-align: center;">
+        <a href="${
+          process.env.APP_URL
+        }" target="_blank" style="background-color: #b91c1c; color: #fff; text-decoration: none; padding: 10px 20px; border-radius: 4px; font-size: 16px; display: inline-block;">
+          Start Watching Now
+        </a>
+      </div>
+      <p style="line-height: 1.6;">If you have any questions or need assistance, feel free to contact our support team at any time.</p>
+      <p style="line-height: 1.6;">Happy streaming!</p>
+      <p style="line-height: 1.6;">- The Flexifyy Team</p>
+    </div>
+    <div style="background-color: #333; color: #fff; text-align: center; padding: 10px 20px; font-size: 14px;">
+      <p style="margin: 0;">&copy; ${new Date().getFullYear()} Flexifyy. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>
+  `;
+
 module.exports = {
   generatePasswordUpdateTemplate,
   generateEmailTemplate,
+  generateWelcomeTemplate,
 };

@@ -5,6 +5,7 @@ const UserModel = require("../Models/userModel");
 const {
   generatePasswordUpdateTemplate,
   generateEmailTemplate,
+  generateWelcomeTemplate,
 } = require("../EmailTemplate");
 
 // POST /auth/request-reset
@@ -98,6 +99,40 @@ const verify_otp = async (req, res) => {
       .json({ message: "Error verifying OTP", error, success: false });
   }
 };
+const send_welcome_email = async (req, res) => {
+  const { email, name } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ error: "Email is required" });
+  }
+
+  try {
+    // Configure Nodemailer
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      secure: true,
+      port: 465,
+      auth: {
+        user: process.env.EMAIL,
+        pass: process.env.APP_PASSWORD,
+      },
+    });
+
+    const mailOptions = {
+      from: process.env.EMAIL,
+      to: email,
+      subject: "Welcome to Flexifyy!",
+      html: generateWelcomeTemplate(name),
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    res.status(200).json({ message: "Email sent successfully" });
+  } catch (error) {
+    console.error("Error sending email:", error);
+    res.status(500).json({ error: "Failed to send email" });
+  }
+};
 
 const signin = async (req, res) => {
   try {
@@ -160,4 +195,10 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { signin, login, request_reset, verify_otp };
+module.exports = {
+  signin,
+  login,
+  request_reset,
+  verify_otp,
+  send_welcome_email,
+};
