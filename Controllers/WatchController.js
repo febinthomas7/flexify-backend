@@ -22,6 +22,7 @@ const watch = async (req, res) => {
     genres,
     embed_url,
     name,
+    thumbnail_url,
   } = movie;
 
   try {
@@ -33,7 +34,7 @@ const watch = async (req, res) => {
       genre_ids: genre_ids || genres,
       overview,
       title: title || name,
-      poster_path: poster_path || thumbnail,
+      poster_path: poster_path || thumbnail || thumbnail_url,
       backdrop_path: backdrop_path || thumbnail,
       vote_average,
       type,
@@ -59,7 +60,7 @@ const watch = async (req, res) => {
         genre_ids: genre_ids || genres,
         overview,
         title: title || name,
-        poster_path: poster_path || thumbnail,
+        poster_path: poster_path || thumbnail || thumbnail_url,
         backdrop_path: backdrop_path || thumbnail,
         vote_average,
         release_date: release_date || first_air_date || year,

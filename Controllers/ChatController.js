@@ -1,6 +1,8 @@
 const chatModel = require("../Models/chatModel");
 const userModel = require("../Models/userModel");
 const messageModel = require("../Models/messageModel");
+const latestChat = require("../Models/latestMsgModel");
+const mongoose = require("mongoose");
 const app = require("../FireBase");
 
 const {
@@ -17,7 +19,6 @@ const sendmessage = async (req, res) => {
   try {
     const { senderId, receiverId, message } = req.body;
     const image = req.files?.image?.[0];
-    console.log(image);
     if (message == "" && !image) {
       return res
         .status(400)
@@ -33,6 +34,37 @@ const sendmessage = async (req, res) => {
         participants: [senderId, receiverId],
       });
     }
+
+    let users = await userModel.find({
+      _id: { $in: [senderId, receiverId] },
+    });
+
+    let newChat = await latestChat.findOne({
+      participants: { $all: [senderId, receiverId] },
+    });
+
+    if (!newChat) {
+      newChat = await latestChat.create({
+        participants: [senderId, receiverId],
+      });
+    }
+
+    if (message || image) {
+      newChat.latestMessage = message || "📷";
+    }
+
+    if (mongoose.Types.ObjectId.isValid(newChat._id)) {
+      // For the sender
+      if (!users[0].newMessage.includes(newChat._id)) {
+        users[0].newMessage.push(newChat._id);
+      }
+
+      // For the receiver
+      if (!users[1].newMessage.includes(newChat._id)) {
+        users[1].newMessage.push(newChat._id);
+      }
+    }
+
     let imageUrl;
     if (image) {
       const imageRef = ref(
@@ -62,7 +94,13 @@ const sendmessage = async (req, res) => {
       convo.messages.push(newMessage._id);
     }
 
-    await Promise.all([convo.save(), newMessage.save()]);
+    await Promise.all([
+      convo.save(),
+      newMessage.save(),
+      users[0].save(),
+      users[1].save(),
+      newChat.save(),
+    ]);
 
     const receiverSocketId = getReceiverSocketId(receiverId);
 
@@ -168,7 +206,10 @@ const user = async (req, res) => {
 const getusers = async (req, res) => {
   const { id } = req.query;
   try {
-    const user = await userModel.find({ _id: { $ne: id } }).select("-password");
+    const user = await userModel
+      .find({ _id: { $ne: id } })
+      .select("-password")
+      .populate("newMessage");
 
     res.status(200).json({ message: "users", success: true, data: user });
   } catch (error) {
