@@ -65,6 +65,14 @@ const sendmessage = async (req, res) => {
       }
     }
 
+    if (!users[0].friends.includes(receiverId)) {
+      users[0].friends.push(receiverId);
+    }
+
+    if (!users[1].friends.includes(senderId)) {
+      users[1].friends.push(senderId);
+    }
+
     let imageUrl;
     if (image) {
       const imageRef = ref(

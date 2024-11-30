@@ -37,6 +37,11 @@ const userSchema = new Schema(
         ref: "latestChat",
       },
     ],
+    friends: [
+      {
+        type: Schema.Types.ObjectId,
+      },
+    ],
     dp: {
       type: String,
     },
