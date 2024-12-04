@@ -12,6 +12,8 @@ const {
   device,
   like,
   deleteLikeById,
+  ContinueWatching,
+  deleteContinue,
 } = require("../Controllers/WatchController");
 const userDp = require("../Controllers/UploadFile");
 const multer = require("multer");
@@ -35,6 +37,18 @@ router.get("/userlist", ensureAuthentication, async (req, res) => {
     const movies = await userModal
       .findOne({ _id: req.query.userId })
       .populate(["watchlist", "likedlist"]);
+
+    res.status(200).json(movies);
+  } catch (error) {
+    console.error("Error fetching movies:", error);
+  }
+});
+
+router.get("/continueList", async (req, res) => {
+  try {
+    const movies = await userModal
+      .findOne({ _id: req.query.userId })
+      .populate(["continue"]);
 
     res.status(200).json(movies);
   } catch (error) {
@@ -84,7 +98,10 @@ router.get("/avatar", async (req, res) => {
   });
 });
 router.post("/addwatch", watch);
+router.post("/continue", ContinueWatching);
+
 router.post("/deletewatch", deleteMovieById);
+router.post("/deleteContinue", deleteContinue);
 router.post("/likedWatch", like);
 router.post("/deletelike", deleteLikeById);
 

@@ -30,6 +30,12 @@ const userSchema = new Schema(
         ref: "deviceDetails",
       },
     ],
+    continue: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "continueWatching",
+      },
+    ],
 
     newMessage: [
       {
