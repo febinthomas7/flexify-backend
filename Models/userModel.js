@@ -48,6 +48,9 @@ const userSchema = new Schema(
         type: Schema.Types.ObjectId,
       },
     ],
+    active: {
+      type: Boolean,
+    },
     dp: {
       type: String,
     },

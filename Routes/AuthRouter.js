@@ -14,10 +14,12 @@ const {
   deleteLikeById,
   ContinueWatching,
   deleteContinue,
+  fetchDeviceDetails,
+  fetchDeviceLogout,
 } = require("../Controllers/WatchController");
+const CheckAuthentication = require("../Controllers/CheckAuthenticated");
 const userDp = require("../Controllers/UploadFile");
 const multer = require("multer");
-const ensureAuthentication = require("../Middlewares/Auth");
 const userModal = require("../Models/userModel");
 const upload = multer({ storage: multer.memoryStorage() });
 const {
@@ -32,11 +34,11 @@ router.post("/send-welcome-email", send_welcome_email);
 
 router.post("/verify-otp", verify_otp);
 
-router.get("/userlist", ensureAuthentication, async (req, res) => {
+router.get("/userlist", async (req, res) => {
   try {
     const movies = await userModal
       .findOne({ _id: req.query.userId })
-      .populate(["watchlist", "likedlist"]);
+      .populate(["watchlist"]);
 
     res.status(200).json(movies);
   } catch (error) {
@@ -65,6 +67,8 @@ router.post(
   userDp
 );
 
+router.get("/check-auth", CheckAuthentication);
+
 router.get("/deleteuserprofileinfo", async (req, res) => {
   const { userId, item } = req.query;
   try {
@@ -89,6 +93,8 @@ router.get("/deleteuserprofileinfo", async (req, res) => {
   }
 });
 router.post("/user/device", device);
+router.get("/device-details", fetchDeviceDetails);
+router.post("/device-logout", fetchDeviceLogout);
 router.get("/avatar", async (req, res) => {
   const user = await userModal.findById(req.query.userId);
   res.send({

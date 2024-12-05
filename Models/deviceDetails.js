@@ -6,8 +6,11 @@ const userSchema = new Schema(
       type: String,
     },
 
-    uniqueIdentifier: {
+    address: {
       type: String,
+    },
+    active: {
+      type: Boolean,
     },
   },
 

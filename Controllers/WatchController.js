@@ -3,6 +3,8 @@ const userModel = require("../Models/userModel");
 const deviceModel = require("../Models/deviceDetails");
 const UserLikedModel = require("../Models/UserLiked");
 const WatchingModel = require("../Models/WatchingModel");
+const getMAC = require("getmac").default;
+const bcrypt = require("bcrypt");
 
 const watch = async (req, res) => {
   const { type, mode, movie, userId } = req.body;
@@ -253,23 +255,31 @@ const deleteLikeById = async (req, res) => {
   }
 };
 const device = async (req, res) => {
+  const address = getMAC();
+  const active = true;
   try {
-    const { device, uniqueIdentifier, userid } = req.body;
+    const { device, userid } = req.body;
 
-    if (!device || !uniqueIdentifier || !userid) {
+    if (!device || !address || !userid) {
       return res
         .status(400)
         .json({ success: false, message: "Missing required fields" });
     }
-
+    // let uniqueIdentifier = await bcrypt.hash(address, 10);
     // Check if the device already exists
     let existingDevice = await deviceModel.findOne({
-      device,
-      uniqueIdentifier,
+      address,
     });
     if (!existingDevice) {
       // Create a new device entry if it doesn't exist
-      existingDevice = await deviceModel.create({ device, uniqueIdentifier });
+      existingDevice = await deviceModel.create({
+        device,
+        address,
+        active,
+      });
+    } else {
+      existingDevice.active = active;
+      await existingDevice.save();
     }
 
     // Find the user and populate their device details
@@ -296,6 +306,48 @@ const device = async (req, res) => {
   } catch (error) {
     console.error("Error in device function:", error);
     res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+const fetchDeviceDetails = async (req, res) => {
+  const { userid } = req.query;
+
+  try {
+    const user = await userModel
+      .findOne({ _id: userid })
+      .populate("devicedetails");
+
+    res.json({
+      success: true,
+      user: user.devicedetails,
+    });
+  } catch (error) {
+    res.json({
+      success: false,
+    });
+  }
+};
+
+const fetchDeviceLogout = async (req, res) => {
+  const address = getMAC();
+
+  try {
+    let existingDevice = await deviceModel.findOne({
+      address,
+    });
+
+    if (existingDevice) {
+      existingDevice.active = false;
+      await existingDevice.save();
+    }
+
+    res.json({
+      success: true,
+    });
+  } catch (error) {
+    res.json({
+      success: false,
+    });
   }
 };
 const deleteContinue = async (req, res) => {
@@ -358,4 +410,6 @@ module.exports = {
   deleteLikeById,
   ContinueWatching,
   deleteContinue,
+  fetchDeviceDetails,
+  fetchDeviceLogout,
 };

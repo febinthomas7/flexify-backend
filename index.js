@@ -11,6 +11,7 @@ var corsOptions = {
   origin: process.env.BASE_URL,
   method: ["GET", "POST"],
 };
+
 app.use(bodyParser.json());
 app.use(cors(corsOptions));
 app.use("/auth", AuthRouter);
