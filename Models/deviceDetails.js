@@ -12,6 +12,9 @@ const userSchema = new Schema(
     active: {
       type: Boolean,
     },
+    userId: {
+      type: String,
+    },
   },
 
   {
