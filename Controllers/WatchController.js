@@ -269,6 +269,7 @@ const device = async (req, res) => {
     // Check if the device already exists
     let existingDevice = await deviceModel.findOne({
       address,
+      device,
       userId: userid,
     });
     if (!existingDevice) {
@@ -332,11 +333,12 @@ const fetchDeviceDetails = async (req, res) => {
 
 const fetchDeviceLogout = async (req, res) => {
   const address = getMAC();
-  const { userid } = req.query;
+  const { userid, device } = req.query;
 
   try {
     let existingDevice = await deviceModel.findOne({
       address,
+      device,
       userId: userid,
     });
 
