@@ -3,8 +3,6 @@ const userModel = require("../Models/userModel");
 const deviceModel = require("../Models/deviceDetails");
 const UserLikedModel = require("../Models/UserLiked");
 const WatchingModel = require("../Models/WatchingModel");
-const getMAC = require("getmac").default;
-const bcrypt = require("bcrypt");
 
 const watch = async (req, res) => {
   const { type, mode, movie, userId } = req.body;
@@ -255,32 +253,28 @@ const deleteLikeById = async (req, res) => {
   }
 };
 const device = async (req, res) => {
-  const address = getMAC();
   const active = true;
   try {
     const { device, userid } = req.body;
 
-    if (!device || !address || !userid) {
+    if (!device || !userid) {
       return res
         .status(400)
         .json({ success: false, message: "Missing required fields" });
     }
-    // let uniqueIdentifier = await bcrypt.hash(address, 10);
-    // Check if the device already exists
+
     let existingDevice = await deviceModel.findOne({
-      address,
-      device,
       userId: userid,
     });
     if (!existingDevice) {
       // Create a new device entry if it doesn't exist
       existingDevice = await deviceModel.create({
-        device,
-        address,
+        users: 1,
         active,
         userId: userid,
       });
     } else {
+      existingDevice.users += 1;
       existingDevice.active = active;
       await existingDevice.save();
     }
@@ -289,7 +283,6 @@ const device = async (req, res) => {
     const user = await userModel
       .findOne({ _id: userid })
       .populate("devicedetails");
-    // .select("device uniqueIdentifier");
     if (!user) {
       return res
         .status(404)
@@ -316,13 +309,10 @@ const fetchDeviceDetails = async (req, res) => {
   const { userid } = req.query;
 
   try {
-    const user = await userModel
-      .findOne({ _id: userid })
-      .populate("devicedetails");
-
+    const user = await deviceModel.findOne({ userId: userid });
     res.json({
       success: true,
-      user: user.devicedetails,
+      user: user,
     });
   } catch (error) {
     res.json({
@@ -332,17 +322,15 @@ const fetchDeviceDetails = async (req, res) => {
 };
 
 const fetchDeviceLogout = async (req, res) => {
-  const address = getMAC();
-  const { userid, device } = req.query;
+  const { userid } = req.query;
 
   try {
     let existingDevice = await deviceModel.findOne({
-      address,
-      device,
       userId: userid,
     });
 
     if (existingDevice) {
+      existingDevice.users -= 1;
       existingDevice.active = false;
       await existingDevice.save();
     }
