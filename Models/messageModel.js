@@ -22,6 +22,10 @@ const userMessages = new Schema(
       trim: true,
       default: "",
     },
+    senderName: {
+      type: String,
+      trim: true,
+    },
   },
   {
     timestamps: true,
