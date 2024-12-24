@@ -101,9 +101,10 @@ const ContinueWatching = async (req, res) => {
   } = movie;
 
   try {
-    const existingMovie = await WatchingModel.findOne({
-      id, // Match by movie ID
-    });
+    const query = id
+      ? { id: id } // If `id` is defined, search by `id`
+      : { title: title };
+    const existingMovie = await WatchingModel.findOne(query);
 
     if (existingMovie) {
       return res.status(200).json({
