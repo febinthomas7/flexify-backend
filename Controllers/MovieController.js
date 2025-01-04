@@ -22,7 +22,7 @@ const searchAnime = (req, res) => {
   const query = req.query.search;
   const options = {
     method: "GET",
-    url: `https://anime-api.xyz/search?q=${query}&page=1`,
+    url: `https://vidapi.xyz/ani-api/search?q=${query}&page=1`,
   };
 
   axios
@@ -72,6 +72,22 @@ const trending = (req, res) => {
     });
 };
 
+const TrendingAnime = (req, res) => {
+  const options = {
+    method: "GET",
+    url: `https://vidapi.xyz/ani-api/top`,
+  };
+
+  axios
+    .request(options)
+    .then((response) => {
+      res.json(response.data);
+    })
+    .catch(function (error) {
+      console.error(error);
+    });
+};
+
 const series = (req, res) => {
   const options = {
     method: "GET",
@@ -94,7 +110,7 @@ const series = (req, res) => {
 const anime = (req, res) => {
   const options = {
     method: "GET",
-    url: `https://anime-api.xyz/new?page=${req.query.page || "1"}`,
+    url: `https://vidapi.xyz/ani-api/new?page=${req.query.page || "1"}`,
   };
 
   axios
@@ -110,7 +126,7 @@ const anime = (req, res) => {
 const animeEpisodes = (req, res) => {
   const options = {
     method: "GET",
-    url: `https://anime-api.xyz/episodes?url=${req.query.id}`,
+    url: `https://vidapi.xyz/ani-api/episodes?url=${req.query.id}`,
   };
 
   axios
@@ -314,6 +330,7 @@ module.exports = {
   search,
   movies,
   anime,
+  TrendingAnime,
   trending,
   series,
   upcomingseries,

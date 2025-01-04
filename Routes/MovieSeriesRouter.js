@@ -18,6 +18,7 @@ const {
   combinedcredits,
   actors,
   animeEpisodes,
+  TrendingAnime,
   searchAnime,
 } = require("../Controllers/MovieController");
 
@@ -26,8 +27,9 @@ router.get("/search", search);
 router.get("/movies", movies);
 
 router.get("/anime", anime);
-
 router.get("/trending", trending);
+
+router.get("/trendinganime", TrendingAnime);
 
 router.get("/series", series);
 
