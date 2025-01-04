@@ -18,7 +18,6 @@ const signinValidation = async (req, res, next) => {
       message: "Invalid email domain",
     });
   }
-  s;
 
   next();
 };
