@@ -38,7 +38,7 @@ router.get("/userlist", async (req, res) => {
   try {
     const movies = await userModal
       .findOne({ _id: req.query.userId })
-      .populate(["watchlist"]);
+      .populate({ path: "watchlist", options: { sort: { createdAt: -1 } } });
 
     res.status(200).json(movies);
   } catch (error) {
@@ -48,9 +48,10 @@ router.get("/userlist", async (req, res) => {
 
 router.get("/continueList", async (req, res) => {
   try {
-    const movies = await userModal
-      .findOne({ _id: req.query.userId })
-      .populate(["continue"]);
+    const movies = await userModal.findOne({ _id: req.query.userId }).populate({
+      path: "continue",
+      options: { sort: { createdAt: -1 } }, // Sort by createdDate in ascending order
+    });
 
     res.status(200).json(movies);
   } catch (error) {

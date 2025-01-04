@@ -286,7 +286,7 @@ const download = async (req, res) => {
     const secondData = secondResponse.data.data.movie?.torrents;
     res.json(secondData);
   } catch (error) {
-    console.error("Error download:", error);
+    console.error("Error download:");
   }
 };
 
