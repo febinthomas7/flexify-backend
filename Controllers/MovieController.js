@@ -93,8 +93,9 @@ const series = (req, res) => {
     method: "GET",
     url: `https://api.themoviedb.org/3/discover/tv?include_adult=false&include_null_first_air_dates=false&with_original_language=${
       req.query.lang || "en"
-    }&with_origin_country=${req.query.country || "US"}&
-    page=${req.query.page || "1"}&sort_by=popularity.desc&api_key=${api_key}`,
+    }&with_origin_country=${req.query.country || "US"}&page=${
+      req.query.page || "1"
+    }&sort_by=popularity.desc&api_key=${api_key}`,
   };
 
   axios
