@@ -71,9 +71,9 @@ router.post(
 router.get("/check-auth", CheckAuthentication);
 
 router.get("/deleteuserprofileinfo", async (req, res) => {
-  const { userId, item } = req.query;
+  const { userid, item } = req.query;
   try {
-    const user = await userModal.findById(userId);
+    const user = await userModal.findById(userid);
     if (item == "dp") {
       user.dp = null;
     }
