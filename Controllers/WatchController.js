@@ -3,6 +3,66 @@ const userModel = require("../Models/userModel");
 const deviceModel = require("../Models/deviceDetails");
 const UserLikedModel = require("../Models/UserLiked");
 const WatchingModel = require("../Models/WatchingModel");
+const axios = require("axios");
+const api_key = process.env.API_KEY;
+
+const UserRecommendations = async (req, res) => {
+  try {
+    const { id } = req.query;
+
+    // Find user and their liked or watched movies
+    const user = await userModel.findOne({ _id: id }).populate("continue");
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // Get movie IDs and types from user's continue watching list
+    const movieDetails = user.continue
+      .filter((movie) => movie.type !== undefined) // Exclude undefined types
+      .map((movie) => ({ id: movie.id, type: movie.type }));
+
+    // If no valid movies to process, return an empty recommendation list
+    if (!movieDetails.length) {
+      return res.status(200).json({ recommendations: [] });
+    }
+
+    // Fetch recommendations for each movie
+    const recommendations = [];
+    for (const { id: movieId, type } of movieDetails) {
+      try {
+        const response = await axios.get(
+          `https://api.themoviedb.org/3/${type}/${movieId}/recommendations`,
+          {
+            params: {
+              language: "en-US",
+              page: 1,
+              sort_by: "popularity.desc",
+              api_key: api_key, // Ensure API key is in environment
+            },
+          }
+        );
+        recommendations.push(...response.data.results);
+      } catch (err) {
+        console.error(`Error fetching recommendations :`);
+      }
+    }
+
+    // Filter duplicates based on movie ID
+    const uniqueRecommendations = Array.from(
+      new Map(recommendations.map((movie) => [movie.id, movie])).values()
+    );
+
+    // Limit recommendations to 10
+    const shuffleArray = (array) => array.sort(() => Math.random() - 0.5);
+    const limitedRecommendations = shuffleArray(uniqueRecommendations).slice(
+      0,
+      10
+    );
+
+    return res.status(200).json({ recommendations: limitedRecommendations });
+  } catch (error) {
+    console.error("Error fetching recommendations:");
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 
 const watch = async (req, res) => {
   const { type, mode, movie, userId } = req.body;
@@ -28,7 +88,24 @@ const watch = async (req, res) => {
 
   try {
     // Validate incoming data (you can use a validation library like Joi for this)
+    const query = id
+      ? { id: id } // If `id` is defined, search by `id`
+      : { title: title };
 
+    const user = await userModel.findOne({ _id: userId }).populate("watchlist");
+    const existingMovie = user.watchlist.find(
+      (movie) =>
+        (query.id && movie.id === query.id) || // Match by `id` if provided
+        (query.title && movie.title === query.title) // Match by `title` if provided
+    );
+
+    if (existingMovie) {
+      return res.status(200).json({
+        message: "Movie already exists in the  Watching list",
+        success: true,
+        data: existingMovie, // Optionally return the existing data
+      });
+    }
     const list = await watchModel.create({
       adult,
       id,
@@ -46,7 +123,6 @@ const watch = async (req, res) => {
       user: userId,
     });
 
-    const user = await userModel.findOne({ _id: userId });
     user.watchlist.push(list._id);
 
     await user.save();
@@ -104,7 +180,13 @@ const ContinueWatching = async (req, res) => {
     const query = id
       ? { id: id } // If `id` is defined, search by `id`
       : { title: title };
-    const existingMovie = await WatchingModel.findOne(query);
+
+    const user = await userModel.findOne({ _id: userId }).populate("continue");
+    const existingMovie = user.continue.find(
+      (movie) =>
+        (query.id && movie.id === query.id) || // Match by `id` if provided
+        (query.title && movie.title === query.title) // Match by `title` if provided
+    );
 
     if (existingMovie) {
       return res.status(200).json({
@@ -132,7 +214,6 @@ const ContinueWatching = async (req, res) => {
       user: userId,
     });
 
-    const user = await userModel.findOne({ _id: userId });
     user.continue.push(list._id);
 
     await user.save();
@@ -407,4 +488,5 @@ module.exports = {
   deleteContinue,
   fetchDeviceDetails,
   fetchDeviceLogout,
+  UserRecommendations,
 };

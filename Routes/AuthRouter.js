@@ -16,6 +16,7 @@ const {
   deleteContinue,
   fetchDeviceDetails,
   fetchDeviceLogout,
+  UserRecommendations,
 } = require("../Controllers/WatchController");
 const CheckAuthentication = require("../Controllers/CheckAuthenticated");
 const userDp = require("../Controllers/UploadFile");
@@ -69,6 +70,7 @@ router.post(
 );
 
 router.get("/check-auth", CheckAuthentication);
+router.get("/user-recommendation", UserRecommendations);
 
 router.get("/deleteuserprofileinfo", async (req, res) => {
   const { userid, item } = req.query;
