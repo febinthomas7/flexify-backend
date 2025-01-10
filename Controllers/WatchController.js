@@ -340,7 +340,7 @@ const Device = async (req, res) => {
     const { userId, device, deviceID, state, country, browser, screenSize } =
       req.body;
 
-    if (!deviceID || !userId) {
+    if (!userId) {
       return res
         .status(400)
         .json({ success: false, message: "Missing required fields" });
