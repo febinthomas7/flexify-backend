@@ -9,7 +9,7 @@ const {
 const {
   watch,
   deleteMovieById,
-  device,
+  Device,
   like,
   deleteLikeById,
   ContinueWatching,
@@ -95,7 +95,7 @@ router.get("/deleteuserprofileinfo", async (req, res) => {
     console.error("Error deleting profile:", error);
   }
 });
-router.post("/user/device", device);
+router.post("/user/device", Device);
 router.get("/device-details", fetchDeviceDetails);
 router.post("/device-logout", fetchDeviceLogout);
 router.get("/avatar", async (req, res) => {

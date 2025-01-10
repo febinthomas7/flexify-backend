@@ -181,7 +181,7 @@ const login = async (req, res) => {
     );
 
     res.status(201).json({
-      message: "user created successfully",
+      message: "Logged in successfully",
       sucess: true,
       jwtToken,
       email,

@@ -334,36 +334,36 @@ const deleteLikeById = async (req, res) => {
     res.status(500).json({ message: "Internal server error", success: false });
   }
 };
-const device = async (req, res) => {
+const Device = async (req, res) => {
   const active = true;
   try {
-    const { device, userid } = req.body;
+    const { userId, device, deviceID, state, country, browser, screenSize } =
+      req.body;
 
-    if (!device || !userid) {
+    if (!deviceID || !userId) {
       return res
         .status(400)
         .json({ success: false, message: "Missing required fields" });
     }
 
-    let existingDevice = await deviceModel.findOne({
-      userId: userid,
-    });
+    let existingDevice = await deviceModel.findOne({ userId, deviceID });
     if (!existingDevice) {
       // Create a new device entry if it doesn't exist
       existingDevice = await deviceModel.create({
-        users: 1,
         active,
-        userId: userid,
+        userId,
+        device,
+        deviceID,
+        state,
+        country,
+        browser,
+        screenSize,
       });
-    } else {
-      existingDevice.users += 1;
-      existingDevice.active = active;
-      await existingDevice.save();
     }
 
     // Find the user and populate their device details
     const user = await userModel
-      .findOne({ _id: userid })
+      .findOne({ _id: userId })
       .populate("devicedetails");
     if (!user) {
       return res
@@ -391,7 +391,10 @@ const fetchDeviceDetails = async (req, res) => {
   const { userid } = req.query;
 
   try {
-    const user = await deviceModel.findOne({ userId: userid });
+    const user = await userModel
+      .findOne({ _id: userid })
+      .select("devicedetails") // Only include the devicedetails field
+      .populate("devicedetails"); // Populate the devicedetails field with device details
     res.json({
       success: true,
       user: user,
@@ -402,30 +405,60 @@ const fetchDeviceDetails = async (req, res) => {
     });
   }
 };
-
 const fetchDeviceLogout = async (req, res) => {
-  const { userid } = req.query;
+  const { deviceID, userId } = req.body;
 
   try {
-    let existingDevice = await deviceModel.findOne({
-      userId: userid,
-    });
-
-    if (existingDevice) {
-      existingDevice.users -= 1;
-      existingDevice.active = false;
-      await existingDevice.save();
+    // Validate input
+    if (!deviceID || !userId) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing required fields (deviceID or userId)",
+      });
     }
+
+    // Find the user
+    let user = await userModel
+      .findOne({ _id: userId })
+      .populate("devicedetails");
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // Find the device
+    let existingDevice = await deviceModel.findOne({ userId, deviceID });
+    if (!existingDevice) {
+      return res.status(404).json({
+        success: false,
+        message: "Device not found",
+      });
+    }
+
+    // Remove the device reference from the user's device details array
+    user.devicedetails = user.devicedetails.filter(
+      (d) => !d._id.equals(existingDevice._id)
+    );
+    await user.save();
+
+    // Delete the device document
+    await deviceModel.deleteOne({ _id: existingDevice._id });
 
     res.json({
       success: true,
+      message: "Device logged out and removed successfully",
     });
   } catch (error) {
-    res.json({
+    console.error("Error in fetchDeviceLogout:", error);
+    res.status(500).json({
       success: false,
+      message: "Internal server error",
     });
   }
 };
+
 const deleteContinue = async (req, res) => {
   const { id } = req.body;
 
@@ -481,7 +514,7 @@ const deleteMovieById = async (req, res) => {
 module.exports = {
   watch,
   deleteMovieById,
-  device,
+  Device,
   like,
   deleteLikeById,
   ContinueWatching,
