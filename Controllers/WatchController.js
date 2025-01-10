@@ -410,7 +410,7 @@ const fetchDeviceLogout = async (req, res) => {
 
   try {
     // Validate input
-    if (!deviceID || !userId) {
+    if (!userId) {
       return res.status(400).json({
         success: false,
         message: "Missing required fields (deviceID or userId)",
