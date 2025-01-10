@@ -423,7 +423,7 @@ const fetchDeviceLogout = async (req, res) => {
       .populate("devicedetails");
     if (!user) {
       return res.status(404).json({
-        success: false,
+        success: true,
         message: "User not found",
       });
     }
