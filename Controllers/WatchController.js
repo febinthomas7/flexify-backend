@@ -17,7 +17,8 @@ const UserRecommendations = async (req, res) => {
     // Get movie IDs and types from user's continue watching list
     const movieDetails = user.continue
       .filter((movie) => movie.type !== undefined) // Exclude undefined types
-      .map((movie) => ({ id: movie.id, type: movie.type }));
+      .map((movie) => ({ id: movie.id, type: movie.type }))
+      .slice(-5);
 
     // If no valid movies to process, return an empty recommendation list
     if (!movieDetails.length) {
@@ -54,7 +55,7 @@ const UserRecommendations = async (req, res) => {
     const shuffleArray = (array) => array.sort(() => Math.random() - 0.5);
     const limitedRecommendations = shuffleArray(uniqueRecommendations).slice(
       0,
-      10
+      12
     );
 
     return res.status(200).json({ recommendations: limitedRecommendations });
