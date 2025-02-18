@@ -12,7 +12,12 @@ const {
   uploadBytesResumable,
 } = require("firebase/storage");
 const { v4: uuidv4 } = require("uuid");
-const { getReceiverSocketId, io } = require("../socket/socket");
+const {
+  getReceiverSocketId,
+  sendNewMessageToUser,
+  sendNewChatToUser,
+  io,
+} = require("../socket/socket");
 const storage = getStorage(app);
 
 const sendmessage = async (req, res) => {
@@ -116,12 +121,15 @@ const sendmessage = async (req, res) => {
     const receiverSocketId = getReceiverSocketId(receiverId);
 
     if (receiverSocketId) {
-      io.to(receiverSocketId).emit("newMessage", newMessage);
+      sendNewMessageToUser(receiverId, newMessage);
+      sendNewChatToUser(receiverId, newChat);
+      // io.to(receiverSocketId).emit("newMessage", newMessage);
     }
 
-    if (receiverSocketId) {
-      io.to(receiverSocketId).emit("newChat", newChat);
-    }
+    // if (receiverSocketId) {
+    // sendNewChatToUser(receiverSocketId, newChat);
+    // io.to(receiverSocketId).emit("newChat", newChat);
+    // }
 
     res.status(200).json({
       newMessage,
@@ -224,7 +232,9 @@ const share = async (req, res) => {
     // Check if the receiver is connected via socket and send the new message
     const receiverSocketId = getReceiverSocketId(receiverId);
     if (receiverSocketId) {
-      io.to(receiverSocketId).emit("newMessage", newMessage);
+      sendNewMessageToUser(receiverId, newMessage);
+      // sendNewChatToUser(receiverId, newChat);
+      // io.to(receiverSocketId).emit("newMessage", newMessage);
     }
 
     // Respond with success and the new message details
