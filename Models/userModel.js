@@ -48,6 +48,15 @@ const userSchema = new Schema(
         type: Schema.Types.ObjectId,
       },
     ],
+    language: {
+      type: String,
+    },
+    genre: {
+      type: String,
+    },
+    country: {
+      type: String,
+    },
     active: {
       type: Boolean,
     },

@@ -5,7 +5,11 @@ const search = (req, res) => {
   const query = req.query.search;
   const options = {
     method: "GET",
-    url: `https://api.themoviedb.org/3/search/multi?query=${query}&include_adult=true&language=en-US&page=1&api_key=${api_key}`,
+    url: `https://api.themoviedb.org/3/search/multi?query=${query}&include_adult=true&with_genres=${
+      req.query.genreid || "18"
+    }&with_original_language=${req.query.lang || "en"}&with_origin_country=${
+      req.query.country || "US"
+    }&page=1&api_key=${api_key}`,
   };
 
   axios
@@ -37,7 +41,7 @@ const searchAnime = (req, res) => {
 const movies = (req, res) => {
   const options = {
     method: "GET",
-    url: `https://api.themoviedb.org/3/discover/movie?include_adult=false&with_genres=${
+    url: `https://api.themoviedb.org/3/discover/movie?include_adult=true&with_genres=${
       req.query.genreid || "18"
     }&include_video=false&with_original_language=${
       req.query.lang || "en"
@@ -59,7 +63,11 @@ const movies = (req, res) => {
 const trending = (req, res) => {
   const options = {
     method: "GET",
-    url: `https://api.themoviedb.org/3/trending/all/day?language=en-US&include_adult=true&api_key=${api_key}`,
+    url: `https://api.themoviedb.org/3/trending/all/day?include_adult=true&with_genres=${
+      req.query.genreid || "18"
+    }&with_original_language=${req.query.lang || "en"}&with_origin_country=${
+      req.query.country || "US"
+    }&api_key=${api_key}`,
   };
 
   axios
@@ -91,11 +99,11 @@ const TrendingAnime = (req, res) => {
 const series = (req, res) => {
   const options = {
     method: "GET",
-    url: `https://api.themoviedb.org/3/discover/tv?include_adult=false&include_null_first_air_dates=false&with_original_language=${
-      req.query.lang || "en"
-    }&with_origin_country=${req.query.country || "US"}&page=${
-      req.query.page || "1"
-    }&sort_by=popularity.desc&api_key=${api_key}`,
+    url: `https://api.themoviedb.org/3/discover/tv?include_adult=true&include_null_first_air_dates=false&with_genres=${
+      req.query.genreid || "18"
+    }&with_original_language=${req.query.lang || "en"}&with_origin_country=${
+      req.query.country || "US"
+    }&page=${req.query.page || "1"}&sort_by=popularity.desc&api_key=${api_key}`,
   };
 
   axios
@@ -159,7 +167,11 @@ const upcomingseries = (req, res) => {
 const upcomingmovies = (req, res) => {
   const options = {
     method: "GET",
-    url: `https://api.themoviedb.org/3/movie/upcoming?with_original_language=ml&page=1&api_key=${api_key}`,
+    url: `https://api.themoviedb.org/3/movie/upcoming?page=1&with_genres=${
+      req.query.genreid || "18"
+    }&with_original_language=${req.query.lang || "en"}&with_origin_country=${
+      req.query.country || "US"
+    }&api_key=${api_key}`,
   };
 
   axios
@@ -207,7 +219,11 @@ const similar = (req, res) => {
 const topratedmovies = (req, res) => {
   const options = {
     method: "GET",
-    url: `https://api.themoviedb.org/3/tv/top_rated?with_origin_country=IN&page=1&api_key=${api_key}`,
+    url: `https://api.themoviedb.org/3/tv/top_rated?with_genres=${
+      req.query.genreid || "18"
+    }&with_original_language=${req.query.lang || "en"}&with_origin_country=${
+      req.query.country || "US"
+    }&page=1&api_key=${api_key}`,
   };
 
   axios

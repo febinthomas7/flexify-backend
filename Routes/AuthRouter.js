@@ -113,5 +113,32 @@ router.post("/deletewatch", deleteMovieById);
 router.post("/deleteContinue", deleteContinue);
 router.post("/likedWatch", like);
 router.post("/deletelike", deleteLikeById);
+router.post("/customContent", async (req, res) => {
+  try {
+    const { language, genre, country } = req.body;
+    const { userId } = req.query;
+
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+
+    // Update user preferences
+    const updatedUser = await userModal.findByIdAndUpdate(
+      userId,
+      { language, genre, country },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res
+      .status(200)
+      .json({ message: "Preferences updated successfully", data: updatedUser });
+  } catch (error) {
+    res.status(500).json({ message: "Error updating preferences", error });
+  }
+});
 
 module.exports = router;
