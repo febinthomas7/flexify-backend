@@ -6,6 +6,7 @@ const {
   verify_otp,
   send_welcome_email,
 } = require("../Controllers/AuthController");
+
 const {
   watch,
   deleteMovieById,
